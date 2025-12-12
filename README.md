@@ -1,3 +1,11 @@
+# Hugo Theme for imprix.net
+
+Misa's Robust was modified by Nya-buro HAGIWARA based on the original [Robust](https://github.com/dim0627/hugo_theme_robust) created by [Daisuke Tsuji](http://yet.unresolved.xyz/) and maintained by [Ress](https://github.com/ress997).
+
+Below is the original README.md
+
+****
+
 This theme is maintained by [Ress](https://github.com/ress997).
 
 # What is this.
@@ -110,4 +118,3 @@ This mode is
 * Show `WordCount`.
 
 And set `{{ if ne (getenv "HUGO_ENV") "DEV" }} Set elements here. {{ end }}` if you want to place only in a production environment.
-
