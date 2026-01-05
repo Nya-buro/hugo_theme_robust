@@ -1,0 +1,16 @@
+{{- $url := "" -}}
+{{- $resource := "" -}}
+{{- $thumb := .Params.thumbnail -}}
+
+{{- if $thumb -}}
+  {{- with .Resources.GetMatch $thumb -}}
+    {{- $processed := .Fill "1280x720 Center webp" -}}
+    {{- $url = $processed.Permalink -}}
+  {{- else -}}
+    {{- $url = $thumb | absURL -}}
+  {{- end -}}
+{{- else -}}
+  {{- $url = "/images/thumbnail.png" | absURL -}}
+{{- end -}}
+
+{{- return $url -}}

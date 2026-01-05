@@ -16,81 +16,107 @@
     {{ if .Site.Params.EnableHighlight | default false }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/styles/default.min.css">
     {{ end }}
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/luminous-basic.min.css">
+    <link rel="stylesheet" href="/css/splide.min.css">
     <style>
-{{ with resources.Get "styles.scss" | toCSS }}
-  {{ replace .Content `@charset "UTF-8";` "" | safeCSS }}
-{{ end }}
-{{ if .Site.Params.Author }}
-  {{ with resources.Get "author.scss" | toCSS }}
-    {{ replace .Content `@charset "UTF-8";` "" | safeCSS }}
-  {{ end }}
-{{ end }}
+      {{ with resources.Get "styles.scss" | toCSS }}
+        {{ replace .Content `@charset "UTF-8";` "" | safeCSS }}
+      {{ end }}
+      {{ if .Site.Params.Author }}
+        {{ with resources.Get "author.scss" | toCSS }}
+          {{ replace .Content `@charset "UTF-8";` "" | safeCSS }}
+        {{ end }}
+      {{ end }}
 
-.thumb {
-  background-image: url("{{ "images/default.jpg" | absURL }}");
-  background-size: cover;
-  background-position: center;
-}
-{{ range $p := .Site.RegularPages }}
-  {{ with $p.Params.thumbnail }}
-.thumb-{{ $p.File.UniqueID }} {
-  background-image: url("{{ . | absURL }}");
-}
-  {{ end }}
-{{ end }}
+      .thumb {
+        background-image: url("/images/default.jpg");
+        background-size: cover;
+        background-position: center;
+      }
+      {{ range $p := .Site.RegularPages }}
+        {{ with $p.Params.thumbnail }}
+          .thumb-{{ $p.File.UniqueID }} {
+            background-image: url("{{ partial "thumbnail.html" $p }}");
+          }
+        {{ end }}
+      {{ end }}
 
-{{ with .Site.Params.fontfamily }} body { font-family: {{ . | safeCSS }}; } {{ end }}
-{{ with .Site.Params.logofontfamily }} .h-logo { font-family: {{ . | safeCSS }}; } {{ end }}
-{{ partial "custom.css" . | safeCSS }}
+      {{ with .Site.Params.fontfamily }} body { font-family: {{ . | safeCSS }}; } {{ end }}
+      {{ with .Site.Params.logofontfamily }} .h-logo { font-family: {{ . | safeCSS }}; } {{ end }}
+      {{ partial "custom.css" . | safeCSS }}
     </style>
-{{ if and .Site.Config.Services.GoogleAnalytics.ID (ne (getenv "HUGO_ENV") "DEV") }}
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Config.Services.GoogleAnalytics.ID }}"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    {{ if and .Site.Config.Services.GoogleAnalytics.ID (ne (getenv "HUGO_ENV") "DEV") }}
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Config.Services.GoogleAnalytics.ID }}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', '{{ .Site.Config.Services.GoogleAnalytics.ID }}');
-</script>
-{{ end }}
+      gtag('config', '{{ .Site.Config.Services.GoogleAnalytics.ID }}');
+    </script>
+    {{ end }}
   </head>
   <body>
     <header class="l-header">
+      <div class="inner">
         <h1 class="logo">
-          <a href="{{ .Site.BaseURL }}">{{ .Site.Title }}</a>
+          <a href="/"><img src="/images/logo.png"></a>
         </h1>
         {{ with .Site.Params.Description }}
         <span class="description">
           {{ . | markdownify}}
         </span>
         {{ end }}
+
+        <!-- グローバルメニュー -->
+        {{ if .Site.Menus.main }}
+        <nav>
+          <!-- スマートフォン向け：ハンバーガーメニュー -->
+          <button class="menu-toggle" aria-controls="main-menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <!-- メニュー本体 -->
+          <div class="menu">
+            <ul>
+              {{ range .Site.Menus.main.ByWeight }}
+              <li>
+                <a href="{{ .URL }}">
+                  {{- .Name -}}
+                </a>
+              {{ if .HasChildren }}
+                <ul>
+                  {{ range .Children }}
+                  <li><a href="{{ .URL | relLangURL }}">{{ .Name }}</a></li>
+                  {{ end }}
+                </ul>
+              {{ end }}
+              </li>
+              {{ end }}
+            </ul>
+          </div>
+        </nav>
+        {{ end }}
+      </div>
     </header>
 
     <main>
       <div class="l-container">
-        <div class="mrow">
-        <div class="mcol c8">
-          {{ block "main" . }}{{ end }}
-        </div>
-        <div class="mcol c4">
-          <aside class="l-sidebar">
-            {{ partial "author.html" . }}
-            {{ partial "latests.html" . }}
-            {{ partial "categories.html" . }}
-            {{ partial "tags.html" . }}
-          </aside>
-        </div>
+        {{ block "main" . }}{{ end }}
       </div>
     </main>
 
     <footer class="l-footer">
       <div class="l-container">
-        <p>{{ with .Site.Copyright }}{{ . | safeHTML }}{{ else }}<span class="h-logo">&copy; {{ .Site.Title }}</span>{{ end }}</p>
         <aside>
-          <p>Powered by <a href="https://gohugo.io/">Hugo</a>.</p>
-          <p><a href="https://github.com/dim0627/hugo_theme_robust">Robust</a> designed by <a href="http://yet.unresolved.xyz/">Daisuke Tsuji</a>.</p>
+          <p>
+            {{ with .Site.Copyright }}{{ . | safeHTML }}{{ else }}<span class="h-logo">&copy; {{ .Site.Title }}</span>{{ end }} |
+            Powered by <a href="https://gohugo.io/">Hugo</a>. |
+            <a href="/privacy-policy">プライバシーポリシー</a>
+          </p>
         </aside>
       </div>
     </footer>
@@ -99,6 +125,25 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.0/highlight.min.js" crossorigin="anonymous"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     {{ end }}
-  </body>
-</html>
+    <script src="/js/luminous.min.js"></script>
+    <script>
+    new LuminousGallery(document.querySelectorAll('.luminous'));
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const menuToggle = document.querySelector('.menu-toggle');
+        const body = document.body;
 
+        if (menuToggle) {
+          menuToggle.addEventListener('click', () => {
+            // bodyにクラスを付け外しすることで、CSSの .menu-open が適用される
+            body.classList.toggle('menu-open');
+
+            // アイコンのアニメーションとARIA属性の切り替え
+            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true' || false;
+            menuToggle.setAttribute('aria-expanded', !isExpanded);
+          });
+        }
+      });
+    </script>
+</html>

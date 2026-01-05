@@ -1,0 +1,74 @@
+{{ define "title" }}{{ if not .IsHome }}{{ .Title }} - {{ end }}{{ end }}
+
+{{ define "main" }}
+{{ if not .IsHome }}
+<header class="page-title">
+  <h1 class="title"><a href="/arakogawa/">同人サークル「荒子川製作所」</a></h1>
+</header>
+{{ end }}
+
+<div class="mrow">
+  <div class="mcol c8">
+    <article class="sn">
+      <div class="article-body">
+        {{ if eq (getenv "HUGO_ENV") "DEV" }}
+        <li>{{ .WordCount }} Words</li>
+        {{ end }}
+        {{ if .Draft }}
+        <li style="color: #2196f3;">DRAFT</li>
+        {{ end }}
+
+        {{/* _index.md の本文を表示 */}}
+
+        {{ .Content }}
+      </div>
+    </article>
+
+    {{/* 配下の投稿を表示 */}}
+    <header class="page-title">
+      <h1 class="title">Works</h1>
+    </header>
+
+    <div class="articles">
+
+      {{ $pctx := . }}
+      {{ if .IsHome }}{{ $pctx = .Site }}{{ end }}
+      {{ $paginator := .Paginate $pctx.RegularPages }}
+      {{ range $paginator.Pages }}
+      <div class="mcol c6">
+        <article class="li">
+          <a href="{{ .Permalink }}">
+            <div class="thumb thumb-{{ .File.UniqueID }}"></div>
+
+            <div class="inner">
+              <h2 class="title">{{ .Title }}</h2>
+
+              <ul class="facts">
+                <li>
+                  <i class="fas fa-calendar" aria-hidden="true"></i>
+                  <time datetime="{{ .Date.Format "2006-01-02T15:04:05JST" }}">{{ .Date.Format ( .Site.Params.dateformat | default "Jan 2, 2006")}}</time></li>
+                {{ if eq (getenv "HUGO_ENV") "DEV" }}
+                <li>{{ .WordCount }} Words</li>
+                {{ end }}
+                {{ if .Draft }}
+                <li style="color: #2196f3;">DRAFT</li>
+                {{ end }}
+              </ul>
+
+              <div class="summary">{{ plainify .Summary | safeHTML }}</div>
+            </div>
+          </a>
+        </article>
+      </div>
+      {{ end }}
+    </div>
+    {{ if or (.Paginator.HasPrev) (.Paginator.HasNext) }}
+    {{ partial "paginator.html" . }}
+    {{ end }}
+  </div>
+  <div class="mcol c4">
+    {{ partial "sidebar-arakogawa.html" . }}
+  </div>
+</div>
+
+{{ end }}

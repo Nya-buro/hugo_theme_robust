@@ -9,7 +9,7 @@
     "headline": {{ print .Title "-" .Site.Title | jsonify | safeJS }},
     "image": {
       "@type": "ImageObject",
-      "url": "{{ absURL (.Params.thumbnail | default "images/default.png") }}",
+      "url": "{{ partial "thumbnail.html" . }}",
       "height": 800,
       "width": 800
     },

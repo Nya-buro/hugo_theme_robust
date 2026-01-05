@@ -6,20 +6,13 @@
 {{ end }}
 
 {{ define "main" }}
-{{ .Render "summary" }}
 
-<div class="adj mrow">
-  <div class="mcol c6">
-    <header>Next Article</header>
-    {{ with .NextInSection }}
-    {{ .Render "li_sm" }}
-    {{ end }}
+<div class="mrow">
+  <div class="mcol c8">
+    {{ .Render "summary" }}
   </div>
-  <div class="mcol c6">
-    <header>Previous Article</header>
-    {{ with .PrevInSection }}
-    {{ .Render "li_sm" }}
-    {{ end }}
+  <div class="mcol c4">
+    {{ partial "sidebar.html" . }}
   </div>
 </div>
 

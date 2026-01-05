@@ -1,12 +1,53 @@
-<figure{{ if .Get "class" }} class="{{ .Get "class" }}"{{ end }}>
-  <img src="{{ .Get "src" | absURL }}" alt="{{ .Get "caption" }}"{{ with (.Get "w") }} width="{{ . }}"{{ end }}{{ with (.Get "h") }} height="{{ . }}"{{ end }}>
-  {{ if .Get "caption" }}
+<figure class="figure">
+  {{- $src := .Get "src" -}}
+  {{- $link := .Get "link" -}}
+  {{- $target := .Get "target" -}}
+  {{- $rel := .Get "rel" -}}
+  {{- $alt := .Get "alt" | default (.Get "caption") | markdownify | plainify -}}
+
+  {{- $original := .Page.Resources.GetMatch $src -}}
+
+  {{- $thumbURL := $src -}}
+  {{- $fullURL := $src -}}
+
+  {{- if $original -}}
+    {{- $oriented := $original.Filter images.AutoOrient -}}
+
+    {{- $thumbnail := $oriented.Fit "800x800 webp" -}}
+    {{- $thumbURL = $thumbnail.RelPermalink -}}
+
+    {{- $full := $oriented.Resize (printf "%dx%d webp" $oriented.Width $oriented.Height) -}}
+    {{- $fullURL = $full.RelPermalink -}}
+  {{- end }}
+  <a href="{{ if not $link }}{{ $fullURL }}{{ else }}{{ $link }}{{ end }}"
+    {{- with $target -}} target="{{ . }}"{{ end }}
+    {{- with $rel -}} rel="{{ . }}"{{ end }}
+    {{- if not $link -}} class="luminous" title="Original Image"{{ end -}}
+  >
+    <img src="{{ $thumbURL }}"
+      alt="{{ $alt }}"
+      {{- with .Get "width" }} width="{{ . }}"{{ end -}}
+      {{- with .Get "height" }} height="{{ . }}"{{ end -}}
+      {{- with .Get "loading" }} loading="{{ . }}"{{ end -}}
+    >
+  </a>
+  {{- if or (or (.Get "title") (.Get "caption")) (.Get "attr") }}
   <figcaption>
-    {{ if .Get "href" }}
-    <a href="{{ .Get "href" }}" rel="noopener" target="_blank">{{ .Get "caption" }}</a>
-    {{ else }}
-    {{ .Get "caption" }}
-    {{ end }}
+    {{- with (.Get "title") -}}
+    <h4>{{ . }}</h4>
+    {{- end -}}
+    {{- if or (.Get "caption") (.Get "attr")}}
+    <p>
+      {{ .Get "caption" | markdownify }}
+      {{- with .Get "attrlink" }}
+      <a href="{{ . }}">
+        {{- end -}}
+        {{- .Get "attr" | markdownify -}}
+        {{- if .Get "attrlink" -}}
+      </a>
+      {{- end }}
+    </p>
+    {{- end }}
   </figcaption>
-  {{ end }}
+  {{- end }}
 </figure>

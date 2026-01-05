@@ -3,36 +3,10 @@
 {{ define "main" }}
 {{ if not .IsHome }}
 <header class="page-title">
-  <h1 class="title">{{ .Title }}</h1>
+  <h1 class="title"><a href="/blog">Blog「荒子川以文会報」</a></h1>
 </header>
 {{ end }}
 
-{{ if .Params.fixed }}
-{{/* _index.md に fixed: true が指定されている場合にのみ表示 */}}
-<div class="mrow">
-  <div class="mcol c8">
-    <article class="sn">
-      <div class="article-body">
-        {{ if eq (getenv "HUGO_ENV") "DEV" }}
-        <li>{{ .WordCount }} Words</li>
-        {{ end }}
-        {{ if .Draft }}
-        <li style="color: #2196f3;">DRAFT</li>
-        {{ end }}
-
-        {{/* _index.md の本文を表示 */}}
-
-        {{ .Content }}
-      </div>
-    </article>
-  </div>
-  <div class="mcol c4">
-    {{ partial "sidebar.html" . }}
-  </div>
-</div>
-
-{{ else }}
-{{/* 通常通りページ一覧を表示 */}}
 <div class="mrow">
   <div class="mcol c8">
     <div class="articles">
@@ -51,7 +25,10 @@
                 <h2 class="title">{{ .Title }}</h2>
 
                 <ul class="facts">
-                  <li><i class="fas fa-calendar" aria-hidden="true"></i><time datetime="{{ .Date.Format "2006-01-02T15:04:05JST" }}">{{ .Date.Format ( .Site.Params.dateformat | default "Jan 2, 2006") }}</time></li>
+                  <li>
+                    <i class="fas fa-calendar" aria-hidden="true"></i>
+                    <time datetime="{{ .Date.Format "2006-01-02T15:04:05JST" }}">{{ .Date.Format ( .Site.Params.dateformat | default "Jan 2, 2006") }}</time>
+                  </li>
                   {{ if eq (getenv "HUGO_ENV") "DEV" }}
                   <li>{{ .WordCount }} Words</li>
                   {{ end }}
@@ -74,8 +51,8 @@
     {{ end }}
   </div>
   <div class="mcol c4">
-    {{ partial "sidebar.html" . }}
+    {{ partial "sidebar-blog.html" . }}
   </div>
 </div>
-{{ end }}
+
 {{ end }}

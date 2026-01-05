@@ -1,0 +1,130 @@
+{{ define "meta" }}
+{{ partial "single_meta.html" . }}
+{{ partial "single_json_ld.html" . }}
+{{ end }}
+
+{{ define "main" }}
+
+  <div class="mrow">
+    <div class="mcol c8">
+      <!-- image carousel -->
+      {{ $slides := .Params.slider }}
+      {{ if $slides }}
+      <section id="image-carousel" class="splide" aria-label="recommend image canonical">
+        <div class="splide__track">
+          <ul class="splide__list">
+            {{ range $slides }}
+            <li class="splide__slide"><a href="{{ .link }}"><img src="{{ .image }}" alt="{{ .alt }}"></a></li>
+            {{ end }}
+          </ul>
+        </div>
+      </section>
+      {{ end }}
+
+      <!-- blog -->
+      {{ $blog := first 5 (where .Site.RegularPages "Section" "blog").ByDate.Reverse }}
+      {{ if $blog }}
+      <section id="blog">
+        <header class="page-title">
+          <h1 class="title"><a href="/blog/">BLOG</a></h1>
+        </header>
+        <article class="sn">
+          <div class="article-body">
+            <ol>
+              {{ range $blog }}
+              <li>
+                <p class="date">{{ .Date.Format "2006.01.02" }}</p>
+                <p class="title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></p>
+              </li>
+              {{ end }}
+            </ol>
+            <p class="index_archive_link"><a href="/blog/">過去のブログ記事</a></p>
+          </div>
+        </article>
+      </section>
+      {{ end }}
+
+      <!-- index arakogawa works -->
+      {{ $arakogawa := first 4 (where .Site.RegularPages "Section" "arakogawa").ByDate.Reverse }}
+      {{ if $arakogawa }}
+      <section id="arakogawa">
+        <header class="page-title">
+          <h1 class="title"><a href="/arakogawa/">同人サークル「荒子川製作所」</a></h1>
+        </header>
+          <div class="articles">
+            <div class="mrow">
+              {{- range $arakogawa }}
+              <div class="mcol c6">
+                <article class="li">
+                  <a href="{{ .RelPermalink }}">
+                    <div class="thumb thumb-{{ .File.UniqueID }}"></div>
+                    <div class="inner">
+                      <h2 class="title">{{ .Title }}</h2>
+                      <ul class="facts">
+                        <li><i class="fas fa-calendar" aria-hidden="true"></i><time datetime="{{ .Date.Format "2006-01-02T15:04:05JST" }}">{{ .Date.Format ( .Site.Params.dateformat | default "Jan 2, 2006") }}</time></li>
+                        {{ if eq (getenv "HUGO_ENV") "DEV" }}
+                        <li>{{ .WordCount }} Words</li>
+                        {{ end }}
+                        {{ if .Draft }}
+                        <li style="color: #2196f3;">DRAFT</li>
+                        {{ end }}
+                      </ul>
+                      <div class="summary">{{ plainify .Summary | safeHTML }}</div>
+                    </div>
+                  </a>
+                </article>
+              </div>
+              {{ end }}
+            </div>
+          </div>
+          <article class="sn">
+            <div class="article-body">
+              <p class="index_archive_link"><a href="/arakogawa/">サークル詳細・過去の頒布物</a></p>
+            </div>
+          </article>
+        </section>
+      {{ end }}
+
+      <!-- other works -->
+      <section id="works">
+        <header class="page-title">
+          <h1 class="title"><a href="/works/">OTHER WORKS</a></h1>
+        </header>
+        <article class="sn">
+          <div class="article-body">
+            <p>その他活動については、 こちらのページをご覧ください。</p>
+            <p class="index_archive_link"><a href="/works/">Works</a></p>
+
+          </div>
+        </article>
+      </section>
+
+    </div>
+    <div class="mcol c4">
+      {{ partial "sidebar.html" . }}
+    </div>
+  </div>
+
+
+<script src="/js/splide.min.js"></script>
+<script>
+  new Splide( '#image-carousel', {
+    cover: true,
+    heightRatio: 0.5625,
+    type: 'fade',
+    rewind: true,
+    autoplay: true,
+    interval: 7000,
+    speed: 3000,
+    arrows: false,
+    pagination: true,
+
+    reducedMotion: {
+      autoplay: 'true',
+      speed: 2000
+    },
+  } ).mount();
+</script>
+
+{{ template "_internal/disqus.html" . }}
+{{ end }}

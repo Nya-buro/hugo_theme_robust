@@ -1,0 +1,21 @@
+<aside class="l-sidebar">
+    {{ partial "author.html" . }}
+
+    <section class="sidebar">
+        <header>LATESTS BLOGS</header>
+        <div class="articles sm">
+            {{ range first 5 (where .Site.RegularPages "Section" "blog") }}
+            {{ .Render "li_sm" }}
+            {{ end }}
+        </div>
+    </section>
+
+    <section class="sidebar">
+        <header>同人サークル「荒子川製作所」</header>
+        <div class="articles sm">
+            {{ range first 5 (where .Site.RegularPages "Section" "arakogawa") }}
+            {{ .Render "li_sm" }}
+            {{ end }}
+        </div>
+    </section>
+</aside>
