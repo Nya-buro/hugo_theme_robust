@@ -4,7 +4,7 @@
 
 {{- if $thumb -}}
   {{- with .Resources.GetMatch $thumb -}}
-    {{- $processed := .Fill "1280x720 Center webp" -}}
+    {{- $processed := .Fill "1280x720 Center" -}}
     {{- $url = $processed.Permalink -}}
   {{- else -}}
     {{- $url = $thumb | absURL -}}

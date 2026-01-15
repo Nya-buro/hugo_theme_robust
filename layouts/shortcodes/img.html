@@ -13,10 +13,10 @@
   {{- if $original -}}
     {{- $oriented := $original.Filter images.AutoOrient -}}
 
-    {{- $thumbnail := $oriented.Fit "800x800 webp" -}}
+    {{- $thumbnail := $oriented.Fit "800x800" -}}
     {{- $thumbURL = $thumbnail.RelPermalink -}}
 
-    {{- $full := $oriented.Resize (printf "%dx%d webp" $oriented.Width $oriented.Height) -}}
+    {{- $full := $oriented.Resize (printf "%dx%d" $oriented.Width $oriented.Height) -}}
     {{- $fullURL = $full.RelPermalink -}}
   {{- end }}
   <a href="{{ if not $link }}{{ $fullURL }}{{ else }}{{ $link }}{{ end }}"
