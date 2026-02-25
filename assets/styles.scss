@@ -605,6 +605,8 @@ article.sn > .article-body code,
 article.sn > .article-body pre {
   font-family: Menlo, Consolas, monospace;
   font-size: .9rem;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 article.sn > .article-body pre {
@@ -629,19 +631,6 @@ article.sn > .article-body pre > code {
 @media (max-width: 768px) {
   article.sn > .article-body pre > code {
     padding: 1rem;
-  }
-}
-
-article.sn > .article-body {
-  p, h1, h2, h3, h4, h5 ,h6, li {
-    code {
-      background-color: #eceff1;
-      color: #333;
-      border-radius: 4px;
-      margin: 0 .25rem;
-      padding: .375rem;
-      white-space: nowrap;
-    }
   }
 }
 
