@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ .Site.Language.LanguageCode }}">
+<html lang="{{ .Site.Language.Locale }}">
   <head>
     <meta charset="utf-8">
     <title>{{ block "title" . }}{{ end }}{{ .Site.Title }}</title>
@@ -20,12 +20,18 @@
     <link rel="stylesheet" href="/css/luminous-basic.min.css">
     <link rel="stylesheet" href="/css/splide.min.css">
     <style>
-      {{ with resources.Get "styles.scss" | toCSS }}
-        {{ replace .Content `@charset "UTF-8";` "" | safeCSS }}
+      {{/*
+        libsass (toCSS) は v0.153.0 で非推奨になったため、CSS ネイティブの入れ子を
+        esbuild で平坦化する css.Build に変更した。
+        externals は static/ 配列を指す url() を解決するための指定。
+      */}}
+      {{ $cssOpts := dict "target" (slice "chrome100" "safari15" "firefox100") "externals" (slice "/images/*") }}
+      {{ with resources.Get "styles.css" | css.Build $cssOpts }}
+        {{ replace .Content `/* <stdin> */` "" | safeCSS }}
       {{ end }}
       {{ if .Site.Params.Author }}
-        {{ with resources.Get "author.scss" | toCSS }}
-          {{ replace .Content `@charset "UTF-8";` "" | safeCSS }}
+        {{ with resources.Get "author.css" | css.Build $cssOpts }}
+          {{ replace .Content `/* <stdin> */` "" | safeCSS }}
         {{ end }}
       {{ end }}
 
@@ -46,7 +52,7 @@
       {{ with .Site.Params.logofontfamily }} .h-logo { font-family: {{ . | safeCSS }}; } {{ end }}
       {{ partial "custom.css" . | safeCSS }}
     </style>
-    {{ if and .Site.Config.Services.GoogleAnalytics.ID (ne (getenv "HUGO_ENV") "DEV") }}
+    {{ if and .Site.Config.Services.GoogleAnalytics.ID (not hugo.IsDevelopment) }}
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Config.Services.GoogleAnalytics.ID }}"></script>
     <script>
@@ -57,7 +63,7 @@
       gtag('config', '{{ .Site.Config.Services.GoogleAnalytics.ID }}');
     </script>
     {{ end }}
-    {{ if and .Site.Params.GoogleAdsense.ID (ne (getenv "HUGO_ENV") "DEV") }}
+    {{ if and .Site.Params.GoogleAdsense.ID (not hugo.IsDevelopment) }}
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ .Site.Params.GoogleAdsense.ID }}" crossorigin="anonymous"></script>
     {{ end }}

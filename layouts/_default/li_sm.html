@@ -6,8 +6,8 @@
       <div class="title">{{ .Title }}</div>
 
       <ul class="facts sm">
-        <li><i class="fas fa-calendar" aria-hidden="true"></i><time datetime="{{ .Date.Format "2007-01-02T15:04:05JST" }}">{{ .Date.Format ( .Site.Params.dateformat | default "Jan 2, 2006") }}</time></li>
-        {{ if eq (getenv "HUGO_ENV") "DEV" }}
+        <li><i class="fas fa-calendar" aria-hidden="true"></i><time datetime="{{ .Date.Format "2006-01-02T15:04:05JST" }}">{{ .Date.Format ( .Site.Params.dateformat | default "Jan 2, 2006") }}</time></li>
+        {{ if hugo.IsDevelopment }}
         <li>{{ .WordCount }} Words</li>
         {{ end }}
         {{ if .Draft }}

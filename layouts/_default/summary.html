@@ -10,7 +10,7 @@
       {{ if ne .Date .Lastmod }}
       <li><i class="fas fa-sync" aria-hidden="true"></i><time datetime="{{ .Lastmod.Format "2006-01-02T15:04:05JST" }}">{{ .Lastmod.Format ( .Site.Params.dateformat | default "Jan 2, 2006") }}</time></li>
       {{ end }}
-      {{ if eq (getenv "HUGO_ENV") "DEV" }}
+      {{ if hugo.IsDevelopment }}
       <li>{{ .WordCount }} Words</li>
       {{ end }}
       {{ if .Draft }}
@@ -35,13 +35,22 @@
 
     {{ $params := .Params }}
     {{ range $key, $value := $.Site.Taxonomies }}
+    {{/* 値が設定されている taxonomy のみ表示（空リストや空文字のエントリは除外） */}}
+    {{ $terms := slice }}
     {{ if isset $params $key }}
+      {{ range $t := (index $params $key) }}
+        {{ if ne (printf "%v" $t) "" }}
+          {{ $terms = $terms | append $t }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+    {{ if $terms }}
     <section class="footer">
       <header>
         <a href="{{ $.Site.BaseURL }}{{ $key | urlize }}/">{{ $key | upper }}</a>
       </header>
       <ul class="terms">
-        {{ range (index $params $key) }}
+        {{ range $terms }}
         <li><a href="{{ $.Site.BaseURL }}{{ $key | urlize }}/{{ . | urlize }}/">{{ . }}</a></li>
         {{ end }}
       </ul>

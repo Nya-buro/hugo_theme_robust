@@ -10,10 +10,8 @@ slug: ''
 thumbnail: ''
 description: ''
 
-categories:
-  - ''
-tags:
-  - ''
+categories: []
+tags: []
 
 toc: true
 fixed: false # _index.md only

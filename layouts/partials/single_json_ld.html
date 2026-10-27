@@ -29,6 +29,6 @@
         "height": 60
       }
     },
-    "description": "{{ .Description | default .Summary }}"
+    "description": {{ .Description | default .Summary | jsonify | safeJS }}
   }
 </script>
