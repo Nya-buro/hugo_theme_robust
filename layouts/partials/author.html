@@ -3,7 +3,7 @@
   <header>AUTHOR</header>
   <div class="author">
     {{ with .thumbnail }}
-    <a href="/about/"><div class="author-thumb" style="background-image: url({{ . | absURL }});"></div></a>
+    <a href="/about/"><div class="author-thumb" style="background-image: url({{ . | relURL }});"></div></a>
     {{ end }}
     <div class="author-name"><a href="/about/">{{ .name }}</a></div>
     <ul class="author-facts">

@@ -40,10 +40,20 @@
         background-size: cover;
         background-position: center;
       }
+      {{/*
+        サムネイルの背景画像は相対URLで出力する（abs: false）。
+        og:image 等は partial 側で絶対URLを明示するため、ここで絶対URLになると
+        プレビュー環境でも本番ドメインを参照してしまう。
+        .thumb-sm-* はサイドバー（li_sm / 80x80px 表示）用の小さい画像。
+        .thumb-* より後に定義することで同特異性の上書きが成立する。
+      */}}
       {{ range $p := .Site.RegularPages }}
         {{ with $p.Params.thumbnail }}
           .thumb-{{ $p.File.UniqueID }} {
-            background-image: url("{{ partial "thumbnail.html" $p }}");
+            background-image: url("{{ partial "thumbnail.html" (dict "page" $p "abs" false) }}");
+          }
+          .thumb-sm-{{ $p.File.UniqueID }} {
+            background-image: url("{{ partial "thumbnail.html" (dict "page" $p "abs" false "size" "320x320 Center") }}");
           }
         {{ end }}
       {{ end }}

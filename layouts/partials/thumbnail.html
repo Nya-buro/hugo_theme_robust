@@ -1,16 +1,39 @@
+{{/*
+  サムネイルの URL を返す。
+
+  引数はページそのもの、または下記の dict:
+    page  対象ページ（省略時は呼び出し元のページ）
+    abs   true で絶対URL、既定は相対URL。
+          og:image / twitter:image / JSON-LD は仕様上絶対URLが必須なので true を明示する。
+          ※ Hugo の default 関数は偽値を潰すため、abs の判定は eq で行っている。
+    size  Fill のサイズ指定。既定 "1280x720 Center"。
+*/}}
+{{- $page := . -}}
+{{- $abs := false -}}
+{{- $size := "1280x720 Center" -}}
+{{- if reflect.IsMap . -}}
+  {{- with .page -}}{{- $page = . -}}{{- end -}}
+  {{- if eq .abs true -}}{{- $abs = true -}}{{- end -}}
+  {{- with .size -}}{{- $size = . -}}{{- end -}}
+{{- end -}}
+
 {{- $url := "" -}}
-{{- $resource := "" -}}
-{{- $thumb := .Params.thumbnail -}}
+{{- $thumb := $page.Params.thumbnail -}}
 
 {{- if $thumb -}}
-  {{- with .Resources.GetMatch $thumb -}}
-    {{- $processed := .Fill "1280x720 Center" -}}
-    {{- $url = $processed.Permalink -}}
+  {{- with $page.Resources.GetMatch $thumb -}}
+    {{- $processed := .Fill $size -}}
+    {{- if $abs -}}
+      {{- $url = $processed.Permalink -}}
+    {{- else -}}
+      {{- $url = $processed.RelPermalink -}}
+    {{- end -}}
   {{- else -}}
-    {{- $url = $thumb | absURL -}}
+    {{- $url = cond $abs ($thumb | absURL) ($thumb | relURL) -}}
   {{- end -}}
 {{- else -}}
-  {{- $url = "/images/thumbnail.png" | absURL -}}
+  {{- $default := "/images/default.jpg" -}}
+  {{- $url = cond $abs ($default | absURL) ($default | relURL) -}}
 {{- end -}}
 
 {{- return $url -}}

@@ -1,6 +1,8 @@
 <article class="lism">
   <a href="{{ .Permalink }}">
-    <div class="thumb thumb-{{ .File.UniqueID }}"></div>
+    {{/* 80x80px 表示のため小さいサムネイル（.thumb-sm-*）を参照する。
+         大きい .thumb-* を併記すると表示されなくても両方がダウンロードされ得るため付けない。 */}}
+    <div class="thumb thumb-sm-{{ .File.UniqueID }}"></div>
 
     <div class="inner">
       <div class="title">{{ .Title }}</div>
